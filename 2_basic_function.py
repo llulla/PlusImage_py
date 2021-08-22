@@ -1,18 +1,51 @@
 import tkinter.ttk as ttk
+import tkinter.messagebox as msgbox
 from tkinter import *
-from typing import Protocol
+from tkinter import filedialog
 
 root=Tk()
 root.title("Plus Image")
 
+def add_file():
+    files = filedialog.askopenfilenames(title="이미지 파일 선택하세요.", filetypes=(("PNG파일", "*.png"),("모든 파일","*.*")),initialdir=r"D:\picture")
+
+    #사용자가 선택한 파일 목록
+    for file in files:
+        list_file.insert(END,file)
+
+def del_file():
+    # print(list_file.curselection())
+    for index in reversed(list_file.curselection()):
+        list_file.delete(index) #0번째 인덱스부터 지우면 인덱스 번호 꼬여서 리버스를 사용 뒤에서부터 지워주는 거임
+
+
+def browse_sest_path():
+    folder_selected=filedialog.askdirectory()
+    if folder_selected is None: #사용자 취소누른 경우
+        return
+    txt_dest_path.delete(0, END)
+    txt_dest_path.insert(0, folder_selected)
+
+def start():
+    print("가로넓이 : ", cmb_width.get())
+    print("간격 : ", cmb_space.get())
+    print("포멧 : ", cmb_format.get())
+
+    if list_file.size() ==0:
+        msgbox.showwarning("경고", "이미지 파일을 추가해주세요.")
+        return
+
+    if len(txt_dest_path.get()) ==0:
+        msgbox.showwarning("경고", "저장 경로를 선택해주세요.")
+        return
 # 파일 프레임 (파일 추가, 선택 삭제)
 file_frame = Frame(root)
 file_frame.pack(fill="x",padx=5, pady=5)
 
-btn_add_file = Button(file_frame, padx=5, pady=5, width=12, text="파일추가")
+btn_add_file = Button(file_frame, padx=5, pady=5, width=12, text="파일추가", command=add_file)
 btn_add_file.pack(side="left",padx=5, pady=5)
 
-btn_del_file = Button(file_frame, padx=5, pady=5, width=12, text="선택삭제")
+btn_del_file = Button(file_frame, padx=5, pady=5, width=12, text="선택삭제", command=del_file)
 btn_del_file.pack(side="right",padx=5, pady=5)
 
 #리스트 프레임
@@ -33,7 +66,7 @@ path_frame.pack(fill="x",padx=5, pady=5)
 txt_dest_path = Entry(path_frame)
 txt_dest_path.pack(side="left", fill="x", expand=True,padx=5, pady=5, ipady=4) #ipady - (inner?) 안쪽패딩 높이 변경
 
-btn_dest_path = Button(path_frame, text="찾아보기", width=10)
+btn_dest_path = Button(path_frame, text="찾아보기", width=10, command= browse_sest_path)
 btn_dest_path.pack(side="right",padx=5, pady=5)
 
 #옵션 프레임
@@ -83,7 +116,7 @@ frame_run.pack(fill="x",padx=5, pady=5)
 btn_close = Button(frame_run, padx=5, pady=5, text="종료", width=12, command=root.quit)
 btn_close.pack(side="right",padx=5, pady=5)
 
-btn_start = Button(frame_run, padx=5, pady=5, text="시작", width=12)
+btn_start = Button(frame_run, padx=5, pady=5, text="시작", width=12, command=start)
 btn_start.pack(side="right",padx=5, pady=5)
 
 
